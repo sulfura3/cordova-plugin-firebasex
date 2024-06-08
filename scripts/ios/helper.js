@@ -223,7 +223,8 @@ module.exports = {
             podFilePath = iosPlatform.podFile,
             podFile = fs.readFileSync(path.resolve(podFilePath)).toString(),
             DEBUG_INFORMATION_FORMAT = pluginVariables['IOS_STRIP_DEBUG'] && pluginVariables['IOS_STRIP_DEBUG'] === 'true' ? 'dwarf' : 'dwarf-with-dsym',
-            IPHONEOS_DEPLOYMENT_TARGET = podFile.match(iosDeploymentTargetPodRegEx)[1];
+            iosDeploymentTargetMatch = podFile.match(iosDeploymentTargetPodRegEx),
+            IPHONEOS_DEPLOYMENT_TARGET = iosDeploymentTargetMatch ? iosDeploymentTargetMatch[1] : null;
 
         if(!podFile.match('post_install')){
             podFile += `
@@ -231,7 +232,7 @@ post_install do |installer|
     installer.pods_project.targets.each do |target|
         target.build_configurations.each do |config|
             config.build_settings['DEBUG_INFORMATION_FORMAT'] = '${DEBUG_INFORMATION_FORMAT}'
-            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '${IPHONEOS_DEPLOYMENT_TARGET}'
+            ${IPHONEOS_DEPLOYMENT_TARGET ? "config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '"+IPHONEOS_DEPLOYMENT_TARGET + "'" : ""}
             if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
                 config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
             end
