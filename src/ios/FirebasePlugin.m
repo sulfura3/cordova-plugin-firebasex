@@ -1025,32 +1025,33 @@ static FIROAuthProvider* oauthProvider;
     @try {
         __weak __auto_type weakSelf = self;
         GIDConfiguration* googleSignInConfig = [[GIDConfiguration alloc] initWithClientID:[FIRApp defaultApp].options.clientID];
-        [GIDSignIn.sharedInstance signInWithConfiguration:googleSignInConfig presentingViewController:self.viewController callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
-          __auto_type strongSelf = weakSelf;
-          if (strongSelf == nil) { return; }
+        GIDSignIn.sharedInstance.configuration = googleSignInConfig;
+        [GIDSignIn.sharedInstance signInWithPresentingViewController:self.viewController completion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
+            __auto_type strongSelf = weakSelf;
+            if (strongSelf == nil) { return; }
 
-            @try{
-                CDVPluginResult* pluginResult;
-                if (error == nil) {
-                    GIDAuthentication *authentication = user.authentication;
-                    FIRAuthCredential *credential =
-                    [FIRGoogleAuthProvider credentialWithIDToken:authentication.idToken
-                                                   accessToken:authentication.accessToken];
+              @try{
+                  CDVPluginResult* pluginResult;
+                  if (error == nil) {
+                      GIDGoogleUser* gidUser = signInResult.user;
+                      FIRAuthCredential *credential =
+                      [FIRGoogleAuthProvider credentialWithIDToken:gidUser.idToken.tokenString
+                                                       accessToken:gidUser.accessToken.tokenString];
 
-                    NSNumber* key = [[FirebasePlugin firebasePlugin] saveAuthCredential:credential];
-                    NSString *idToken = user.authentication.idToken;
-                    NSMutableDictionary* result = [[NSMutableDictionary alloc] init];
-                    [result setValue:@"true" forKey:@"instantVerification"];
-                    [result setValue:key forKey:@"id"];
-                    [result setValue:idToken forKey:@"idToken"];
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
-                } else {
-                    pluginResult = [self createAuthErrorResult:error];
-                }
-                [[FirebasePlugin firebasePlugin].commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-            }@catch (NSException *exception) {
-                [FirebasePlugin.firebasePlugin handlePluginExceptionWithoutContext:exception];
-            }
+                      NSNumber* key = [[FirebasePlugin firebasePlugin] saveAuthCredential:credential];
+                      NSString *idToken = gidUser.idToken.tokenString;
+                      NSMutableDictionary* result = [[NSMutableDictionary alloc] init];
+                      [result setValue:@"true" forKey:@"instantVerification"];
+                      [result setValue:key forKey:@"id"];
+                      [result setValue:idToken forKey:@"idToken"];
+                      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
+                  } else {
+                      pluginResult = [self createAuthErrorResult:error];
+                  }
+                  [[FirebasePlugin firebasePlugin].commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+              }@catch (NSException *exception) {
+                  [FirebasePlugin.firebasePlugin handlePluginExceptionWithoutContext:exception];
+              }
         }];
 
         [self sendPluginNoResultAndKeepCallback:command callbackId:command.callbackId];
@@ -1234,7 +1235,7 @@ static FIROAuthProvider* oauthProvider;
         // If signed in with Google
         if([GIDSignIn.sharedInstance currentUser] != nil){
             // Sign out of Google
-            [GIDSignIn.sharedInstance disconnectWithCallback:^(NSError * _Nullable error) {
+            [GIDSignIn.sharedInstance disconnectWithCompletion:^(NSError * _Nullable error) {
                 if (error) {
                     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[NSString stringWithFormat:@"Error signing out of Google: %@", error]] callbackId:command.callbackId];
                 }
