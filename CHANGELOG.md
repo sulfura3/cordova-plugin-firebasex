@@ -1,3 +1,17 @@
+# Version 17.0.0
+* (ios) BREAKING: Update pinned Firebase SDK versions to [v11.2.0](https://firebase.google.com/support/release-notes/ios#version_1120_-_september_10_2024) and updated related dependencies: GoogleSignIn v7.0.0, GoogleTagManager v8.0.0
+  * Firebase iOS SDK v11 supports iOS 13+
+    * BREAKING: drops support for iOS 12 which was supported by Firebase iOS SDK v10
+  * Resolves [#892](https://github.com/dpa99c/cordova-plugin-firebasex/issues/892)
+* (ios) Update to use Google Sign-In SDK v7 signatures.
+  * Resolves [#809](https://github.com/dpa99c/cordova-plugin-firebasex/issues/809)
+* (ios) bugfix: gracefully handle missing iOS deployment target in Podfile.
+    * Resolves [#868](https://github.com/dpa99c/cordova-plugin-firebasex/issues/868)
+* (ios) Add support for `IOS_FIREBASE_IN_APP_MESSAGING_VERSION` plugin variable to enable specifying a different version of the InappMessaging SDK component from the other Firebase iOS SDK components
+* (Android) update: Pin latest Firebase SDK component versions to [Bom v33.3.0](https://firebase.google.com/support/release-notes/android#bom_v33-3-0) as of [12 Sep 2024](https://firebase.google.com/support/release-notes/android#2024-09-12)
+* fix: Queue global JS executions if plugin is not yet initialized to prevent calling functions on the plugin JS API before Cordova has loaded the plugin JS namespace.
+  * Resolves [#888](https://github.com/dpa99c/cordova-plugin-firebasex/issues/888)
+
 # Version 16.5.0
 * (Android) update: Pin latest Firebase SDK component versions as of [11 Apr 2024](https://firebase.google.com/support/release-notes/android#2024-04-11)
 * (iOS) update: Pin latest Firebase SDK components v10.24.0 as of [9 Apr 2024](https://firebase.google.com/support/release-notes/ios#version_10240_-_april_9_2024)
