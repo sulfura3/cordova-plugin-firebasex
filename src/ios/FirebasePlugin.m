@@ -40,6 +40,7 @@ static NSString*const GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS 
 static NSString*const FIREBASEX_IOS_FCM_ENABLED = @"FIREBASEX_IOS_FCM_ENABLED";
 
 static FirebasePlugin* firebasePlugin;
+static BOOL pluginInitialized = NO;
 static BOOL registeredForRemoteNotifications = NO;
 static BOOL openSettingsEmitted = NO;
 static NSMutableDictionary* authCredentials;
@@ -52,6 +53,7 @@ static NSString* currentInstallationId;
 static NSMutableDictionary* traces;
 static FIRMultiFactorResolver* multiFactorResolver;
 static FIROAuthProvider* oauthProvider;
+static NSMutableArray* pendingGlobalJS = nil;
 
 
 + (FirebasePlugin*) firebasePlugin {
@@ -133,6 +135,9 @@ static FIROAuthProvider* oauthProvider;
         authCredentials = [[NSMutableDictionary alloc] init];
         firestoreListeners = [[NSMutableDictionary alloc] init];
         traces = [[NSMutableDictionary alloc] init];
+
+        pluginInitialized = YES;
+        [self executePendingGlobalJavascript];
     }@catch (NSException *exception) {
         [self handlePluginExceptionWithoutContext:exception];
     }
@@ -2827,6 +2832,31 @@ static FIROAuthProvider* oauthProvider;
 
 - (void)executeGlobalJavascript: (NSString*)jsString
 {
+    if(pluginInitialized){
+        [self doExecuteGlobalJavascript:jsString];
+    }else{
+        if(pendingGlobalJS == nil){
+            pendingGlobalJS = [[NSMutableArray alloc] init];
+        }
+        [pendingGlobalJS addObject:jsString];
+    }
+}
+
+- (void) executePendingGlobalJavascript
+{
+    if(pendingGlobalJS == nil){
+        NSLog(@"%@ No pending global JS calls", LOG_TAG);
+        return;
+    }
+    NSLog(@"%@ Executing %lu pending global JS calls", LOG_TAG, (unsigned long)pendingGlobalJS.count);
+    for (NSString* jsString in pendingGlobalJS) {
+        [self doExecuteGlobalJavascript:jsString];
+    }
+    pendingGlobalJS = nil;
+}
+
+- (void)doExecuteGlobalJavascript: (NSString*)jsString
+{
     [self.commandDelegate evalJs:jsString];
 }
 
@@ -3002,28 +3032,28 @@ static FIROAuthProvider* oauthProvider;
 
 # pragma mark - Stubs
 - (void)createChannel:(CDVInvokedUrlCommand *)command {
-	[self.commandDelegate runInBackground:^{
+    [self.commandDelegate runInBackground:^{
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
 - (void)setDefaultChannel:(CDVInvokedUrlCommand *)command {
-	[self.commandDelegate runInBackground:^{
+    [self.commandDelegate runInBackground:^{
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
 - (void)deleteChannel:(CDVInvokedUrlCommand *)command {
-	[self.commandDelegate runInBackground:^{
+    [self.commandDelegate runInBackground:^{
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
 - (void)listChannels:(CDVInvokedUrlCommand *)command {
-	[self.commandDelegate runInBackground:^{
+    [self.commandDelegate runInBackground:^{
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
