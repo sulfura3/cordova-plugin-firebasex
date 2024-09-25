@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 #import <GoogleSignIn/GoogleSignIn.h>
+#import "FirebaseAuth-Swift.h"
 
 @import UserNotifications;
 @import AuthenticationServices;
