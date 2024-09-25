@@ -281,41 +281,43 @@ The following plugin variables are used to specify the Firebase SDK versions as 
 
 ### iOS only
 
--   `IOS_FIREBASE_SDK_VERSION` - a specific version of the Firebase iOS SDK to set in the Podfile
-    -   If not specified, the default version defined in `<pod>` elements in the `plugin.xml` will be used.
--   `IOS_GOOGLE_SIGIN_VERSION` - a specific version of the Google Sign In library to set in the Podfile
+- `IOS_FIREBASE_SDK_VERSION` - a specific version of the Firebase iOS SDK to set in the Podfile
+    - If not specified, the default version defined in `<pod>` elements in the `plugin.xml` will be used.
+- `IOS_FIREBASE_IN_APP_MESSAGING_VERSION` - a specific version of the Firebase iOS InAppMessaging SDK to set in the Podfile
+    - If not specified, the default version defined in `<pod>` elements in the `plugin.xml` will be used.
+- `IOS_GOOGLE_SIGIN_VERSION` - a specific version of the Google Sign In library to set in the Podfile
     -   If not specified, the default version defined in the `<pod>` element in the `plugin.xml` will be used.
--   `IOS_GOOGLE_TAG_MANAGER_VERSION` - a specific version of the Google Tag Manager library to set in the Podfile
+- `IOS_GOOGLE_TAG_MANAGER_VERSION` - a specific version of the Google Tag Manager library to set in the Podfile
     -   If not specified, the default version defined in the `<pod>` element in the `plugin.xml` will be used.
--   `IOS_USE_PRECOMPILED_FIRESTORE_POD` - if `true`, switches Podfile to use a [pre-compiled version of the Firestore pod](https://github.com/invertase/firestore-ios-sdk-frameworks.git) to reduce build time
+- `IOS_USE_PRECOMPILED_FIRESTORE_POD` - if `true`, switches Podfile to use a [pre-compiled version of the Firestore pod](https://github.com/invertase/firestore-ios-sdk-frameworks.git) to reduce build time
     -   Since some users experienced long build times due to the Firestore pod (see [#407](https://github.com/dpa99c/cordova-plugin-firebasex/issues/407))
     -   However other users have experienced build issues with the pre-compiled version (see [#735](https://github.com/dpa99c/cordova-plugin-firebasex/issues/735))
     -   Defaults to `false` if not specified.
     -   Note that this is a [post-install plugin variable](#post-install-plugin-variables) so an additional step is required to activate the plugin variable the first time it is specified.
--   `IOS_STRIP_DEBUG` - prevents symbolification of all libraries included via Cocoapods. See [Strip debug symbols](#strip-debug-symbols) for more info.
+- `IOS_STRIP_DEBUG` - prevents symbolification of all libraries included via Cocoapods. See [Strip debug symbols](#strip-debug-symbols) for more info.
     -   e.g. `--variable IOS_STRIP_DEBUG=true`
     -   Defaults to `false` if not specified.
--   `SETUP_RECAPTCHA_VERIFICATION` - automatically sets up reCAPTCHA verification for phone authentication on iOS. See [verifyPhoneNumber](#verifyphonenumber) for more info.
+- `SETUP_RECAPTCHA_VERIFICATION` - automatically sets up reCAPTCHA verification for phone authentication on iOS. See [verifyPhoneNumber](#verifyphonenumber) for more info.
     -   e.g. `--variable SETUP_RECAPTCHA_VERIFICATION=true`
     -   Defaults to `false` if not specified.
--   `IOS_SHOULD_ESTABLISH_DIRECT_CHANNEL` - If `true` Firebase Messaging will automatically establish a socket-based, direct channel to the FCM server.
+- `IOS_SHOULD_ESTABLISH_DIRECT_CHANNEL` - If `true` Firebase Messaging will automatically establish a socket-based, direct channel to the FCM server.
     -   e.g. `--variable IOS_SHOULD_ESTABLISH_DIRECT_CHANNEL=true`
     -   Defaults to `false` if not specified.
     -   See [`shouldEstablishDirectChannel`](<https://firebase.google.com/docs/reference/ios/firebasemessaging/api/reference/Classes/FIRMessaging#/c:objc(cs)FIRMessaging(py)shouldEstablishDirectChannel>)
     -   Note: Firebase Messaging iOS SDK version 7.0 will be a breaking change where the SDK will no longer support iOS Direct Channel API.
--   `IOS_FIREBASE_CONFIG_FILEPATH` - sets a custom filepath to `GoogleService-Info.plist` file as a path relative to the project root
+- `IOS_FIREBASE_CONFIG_FILEPATH` - sets a custom filepath to `GoogleService-Info.plist` file as a path relative to the project root
     -   e.g. `--variable IOS_FIREBASE_CONFIG_FILEPATH="resources/ios/GoogleService-Info.plist"`
--   `IOS_ENABLE_APPLE_SIGNIN` - enables the Sign In with Apple capability in Xcode.
+- `IOS_ENABLE_APPLE_SIGNIN` - enables the Sign In with Apple capability in Xcode.
     -   `--variable IOS_ENABLE_APPLE_SIGNIN=true`
     -   Ensure the associated app provisioning profile also has this capability enabled.
--   `IOS_ENABLE_CRITICAL_ALERTS_ENABLED` - enables the critical alerts capability
+- `IOS_ENABLE_CRITICAL_ALERTS_ENABLED` - enables the critical alerts capability
     -   `--variable IOS_ENABLE_CRITICAL_ALERTS_ENABLED=true`
     -   See [iOS critical notifications](#ios-critical-notifications)
     -   Ensure the associated app provisioning profile also has this capability enabled.
--   `IOS_FCM_ENABLED` - allows to completely disable push notifications functionality of the plugin (not just the automatic initialization that is covered by `FIREBASE_FCM_AUTOINIT_ENABLED` variable).
+- `IOS_FCM_ENABLED` - allows to completely disable push notifications functionality of the plugin (not just the automatic initialization that is covered by `FIREBASE_FCM_AUTOINIT_ENABLED` variable).
     -   Defaults to `true`, if not specified; i.e. FCM is enabled by default.
     -   This can be handy if you are using this plugin for e.g. Crashlytics and handle push notifications using another plugin. Use `--variable IOS_FCM_ENABLED=false` in this case.
--   `IOS_ON_DEVICE_CONVERSION_ANALYTICS` - whether to include the On-Device Conversion component of the Firebase SDK.
+- `IOS_ON_DEVICE_CONVERSION_ANALYTICS` - whether to include the On-Device Conversion component of the Firebase SDK.
     -   Defaults to `false` if not specified.
     -   If `true`, the component will be included and [initiateOnDeviceConversionMeasurement](#initiateondeviceconversionmeasurement) can be called at run-time to enable it.
     -   Note that this is a [post-install plugin variable](#post-install-plugin-variables) so an additional step is required to activate the plugin variable the first time it is specified.

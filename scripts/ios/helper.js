@@ -12,6 +12,7 @@ var comment = "\"Crashlytics\"";
 
 var versionRegex = /\d+\.\d+\.\d+[^'"]*/,
     firebasePodRegex = /pod 'Firebase([^']+)', '(\d+\.\d+\.\d+[^'"]*)'/g,
+    inAppMessagingPodRegEx = /pod 'FirebaseInAppMessaging', '(\d+\.\d+\.\d+[^'"]*)'/,
     standardFirestorePodRegEx = /pod 'FirebaseFirestore', '(\d+\.\d+\.\d+[^'"]*)'/,
     googleSignInPodRegEx = /pod 'GoogleSignIn', '(\d+\.\d+\.\d+[^'"]*)'/,
     googleTagManagerPodRegEx = /pod 'GoogleTagManager', '(\d+\.\d+\.\d+[^'"]*)'/,
@@ -335,13 +336,37 @@ end
     },
     applyPluginVarsToPodfile: function(pluginVariables, iosPlatform){
         var podFileContents = fs.readFileSync(path.resolve(iosPlatform.podFile), 'utf8'),
-            podFileModified = false;
+            podFileModified = false,
+            specifiedInAppMessagingVersion = false;
+
+        if(pluginVariables['IOS_FIREBASE_IN_APP_MESSAGING_VERSION']){
+            if(pluginVariables['IOS_FIREBASE_IN_APP_MESSAGING_VERSION'].match(versionRegex)){
+                specifiedInAppMessagingVersion = true;
+                var matches = podFileContents.match(inAppMessagingPodRegEx);
+                if(matches){
+                    matches.forEach((match) => {
+                        var currentVersion = match.match(versionRegex)[0];
+                        if(!match.match(pluginVariables['IOS_FIREBASE_IN_APP_MESSAGING_VERSION'])){
+                            podFileContents = podFileContents.replace(match, match.replace(currentVersion, pluginVariables['IOS_FIREBASE_IN_APP_MESSAGING_VERSION']));
+                            podFileModified = true;
+                        }
+                    });
+                    if(podFileModified) utilities.log("Firebase iOS InAppMessaging SDK version set to v"+pluginVariables['IOS_FIREBASE_IN_APP_MESSAGING_VERSION']+" in Podfile");
+                }
+            }else{
+                throw new Error("The value \""+pluginVariables['IOS_FIREBASE_IN_APP_MESSAGING_VERSION']+"\" for IOS_FIREBASE_IN_APP_MESSAGING_VERSION is not a valid semantic version format")
+            }
+        }
 
         if(pluginVariables['IOS_FIREBASE_SDK_VERSION']){
             if(pluginVariables['IOS_FIREBASE_SDK_VERSION'].match(versionRegex)){
                 var matches = podFileContents.match(firebasePodRegex);
                 if(matches){
                     matches.forEach((match) => {
+                        if(match.match(inAppMessagingPodRegEx) && specifiedInAppMessagingVersion){
+                            return; // Skip Firebase In App Messaging pod if it was specified separately
+                        }
+
                         var currentVersion = match.match(versionRegex)[0];
                         if(!match.match(pluginVariables['IOS_FIREBASE_SDK_VERSION'])){
                             podFileContents = podFileContents.replace(match, match.replace(currentVersion, pluginVariables['IOS_FIREBASE_SDK_VERSION']));
@@ -351,7 +376,7 @@ end
                     if(podFileModified) utilities.log("Firebase iOS SDK version set to v"+pluginVariables['IOS_FIREBASE_SDK_VERSION']+" in Podfile");
                 }
             }else{
-                throw new Error("The value \""+pluginVariables['IOS_FIREBASE_SDK_VERSION']+"\" for IOS_FIREBASE_SDK_VERSION is not a valid version in the format 'X.Y.Z'")
+                throw new Error("The value \""+pluginVariables['IOS_FIREBASE_SDK_VERSION']+"\" for IOS_FIREBASE_SDK_VERSION is not a valid semantic version format")
             }
         }
 
@@ -369,7 +394,7 @@ end
                     if(podFileModified) utilities.log("Google Sign In version set to v"+pluginVariables['IOS_GOOGLE_SIGIN_VERSION']+" in Podfile");
                 }
             }else{
-                throw new Error("The value \""+pluginVariables['IOS_GOOGLE_SIGIN_VERSION']+"\" for IOS_GOOGLE_SIGIN_VERSION is not a valid version in the format 'X.Y.Z'")
+                throw new Error("The value \""+pluginVariables['IOS_GOOGLE_SIGIN_VERSION']+"\" for IOS_GOOGLE_SIGIN_VERSION is not a valid semantic version format")
             }
         }
 
@@ -387,7 +412,7 @@ end
                     if(podFileModified) utilities.log("Google Tag Manager version set to v"+pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION']+" in Podfile");
                 }
             }else{
-                throw new Error("The value \""+pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION']+"\" for IOS_GOOGLE_TAG_MANAGER_VERSION is not a valid version in the format 'X.Y.Z'")
+                throw new Error("The value \""+pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION']+"\" for IOS_GOOGLE_TAG_MANAGER_VERSION is not a valid semantic version format")
             }
         }
 
