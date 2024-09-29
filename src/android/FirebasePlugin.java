@@ -151,6 +151,8 @@ public class FirebasePlugin extends CordovaPlugin {
     private static CordovaInterface cordovaInterface = null;
     protected static Context applicationContext = null;
     private static Activity cordovaActivity = null;
+    private static boolean pluginInitialized = false;
+    private static ArrayList<String> pendingGlobalJS = null;
 
     protected static final String TAG = "FirebasePlugin";
     protected static final String JS_GLOBAL_NAMESPACE = "FirebasePlugin.";
@@ -271,6 +273,10 @@ public class FirebasePlugin extends CordovaPlugin {
                     defaultChannelId = getStringResource("default_notification_channel_id");
                     defaultChannelName = getStringResource("default_notification_channel_name");
                     createDefaultChannel();
+
+                    pluginInitialized = true;
+                    executePendingGlobalJavascript();
+
                 } catch (Exception e) {
                     handleExceptionWithoutContext(e);
                 }
@@ -3776,6 +3782,29 @@ public class FirebasePlugin extends CordovaPlugin {
     }
 
     private void executeGlobalJavascript(final String jsString) {
+        if(pluginInitialized){
+            doExecuteGlobalJavascript(jsString);
+        } else {
+            if(pendingGlobalJS == null) {
+                pendingGlobalJS = new ArrayList<>();
+            }
+            pendingGlobalJS.add(jsString);
+        }
+    }
+
+    private void executePendingGlobalJavascript() {
+        if(pendingGlobalJS == null){
+            Log.d(TAG, "No pending global JS calls");
+            return;
+        }
+        Log.d(TAG, "Executing "+pendingGlobalJS.size()+" pending global JS calls");
+        for(String jsString : pendingGlobalJS){
+            doExecuteGlobalJavascript(jsString);
+        }
+        pendingGlobalJS = null;
+    }
+
+    private void doExecuteGlobalJavascript(final String jsString) {
         if (cordovaActivity == null) return;
         cordovaActivity.runOnUiThread(new Runnable() {
             @Override
