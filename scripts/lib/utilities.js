@@ -64,6 +64,14 @@ Utilities.writeJsonToXmlFile = function(jsonObj, filepath, parseOpts){
  * Used to get the name of the application as defined in the config.xml.
  */
 Utilities.getAppName = function(){
+    // Cordova-iOS 8 and greater has a static app name of "App".
+    // Check for "App.xcodeproj" and return "App" if it exists.
+    const xcodeprojPath = path.resolve('platforms', 'ios', 'App.xcodeproj');
+    if(fs.existsSync(xcodeprojPath)) {
+        return 'App';
+    }
+
+    // If not "App", try and extract from "config.xml" as before for older Cordova-iOS platforms.
     return Utilities.parseConfigXml().widget.name._text.toString().trim();
 };
 
