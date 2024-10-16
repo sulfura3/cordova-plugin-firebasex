@@ -61,18 +61,16 @@ Utilities.writeJsonToXmlFile = function(jsonObj, filepath, parseOpts){
 };
 
 /**
- * Used to get the name of the application as defined in the config.xml.
+ * Used to get the name of the application from the xcodeCordovaProj directory path.
+ * The xcodeCordovaProj directory path is defined in the locations property of the Cordova-iOS platform's API.
  */
 Utilities.getAppName = function(){
-    // Cordova-iOS 8 and greater has a static app name of "App".
-    // Check for "App.xcodeproj" and return "App" if it exists.
-    const xcodeprojPath = path.resolve('platforms', 'ios', 'App.xcodeproj');
-    if(fs.existsSync(xcodeprojPath)) {
-        return 'App';
-    }
+    const projectRoot = _context.opts.projectRoot;
+    const platformPath = path.join(projectRoot, 'platforms', 'ios');
+    const cordova_ios = require('cordova-ios');
+    const iosProject = new cordova_ios('ios', platformPath);
 
-    // If not "App", try and extract from "config.xml" as before for older Cordova-iOS platforms.
-    return Utilities.parseConfigXml().widget.name._text.toString().trim();
+    return path.basename(iosProject.locations.xcodeCordovaProj);
 };
 
 /**
