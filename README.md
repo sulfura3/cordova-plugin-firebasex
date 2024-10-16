@@ -598,7 +598,7 @@ If you receive a build error such as this:
 
 Make sure your local Cocoapods repo is up-to-date by running `pod repo update` then run `pod install` in `/your_project/platforms/ios/`.
 
-### Set up Xcode to automatically upload dSYM files
+### Set up project to automatically upload dSYM files
 Firebase Documentation [Get started with Firebase Crashlytics](https://firebase.google.com/docs/crashlytics/get-started?platform=ios#set-up-dsym-uploading)
 
 Make sure `cordova-plugin-firebasex` is last plugin in cordova section of your package.json
