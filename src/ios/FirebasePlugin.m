@@ -1049,7 +1049,6 @@ static NSMutableArray* pendingGlobalJS = nil;
                       [result setValue:@"true" forKey:@"instantVerification"];
                       [result setValue:key forKey:@"id"];
                       [result setValue:idToken forKey:@"idToken"];
-                      [result setValue:rawNonce forKey:@"rawNonce"];
                       pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
                   } else {
                       pluginResult = [self createAuthErrorResult:error];
