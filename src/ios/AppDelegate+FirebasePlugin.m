@@ -156,6 +156,8 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
     }@catch (NSException *exception) {
         [FirebasePlugin.firebasePlugin handlePluginExceptionWithoutContext:exception];
     }
+    
+    [FirebasePlugin.firebasePlugin sendPendingNotifications];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {

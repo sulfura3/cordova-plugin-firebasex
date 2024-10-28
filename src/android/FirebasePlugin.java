@@ -594,6 +594,9 @@ public class FirebasePlugin extends CordovaPlugin {
     @Override
     public void onResume(boolean multitasking) {
         FirebasePlugin.inBackground = false;
+        if (FirebasePlugin.notificationCallbackContext != null) {
+            sendPendingNotifications();
+        }
     }
 
     @Override
@@ -611,6 +614,7 @@ public class FirebasePlugin extends CordovaPlugin {
         cordovaActivity = null;
         cordovaInterface = null;
         applicationContext = null;
+        onReset();
         super.onDestroy();
     }
 
@@ -664,11 +668,23 @@ public class FirebasePlugin extends CordovaPlugin {
 
     private void onMessageReceived(final CallbackContext callbackContext) {
         FirebasePlugin.notificationCallbackContext = callbackContext;
+        sendPendingNotifications();
+    }
+
+    private synchronized void sendPendingNotifications() {
         if (FirebasePlugin.notificationStack != null) {
-            for (Bundle bundle : FirebasePlugin.notificationStack) {
-                FirebasePlugin.sendMessage(bundle, applicationContext);
-            }
-            FirebasePlugin.notificationStack.clear();
+            this.cordova.getThreadPool().execute(new Runnable() {
+                public void run() {
+                    try {
+                        for (Bundle bundle : FirebasePlugin.notificationStack) {
+                            FirebasePlugin.sendMessage(bundle, applicationContext);
+                        }
+                        FirebasePlugin.notificationStack.clear();
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
+            });
         }
     }
 
@@ -707,7 +723,7 @@ public class FirebasePlugin extends CordovaPlugin {
     }
 
     public static void sendMessage(Bundle bundle, Context context) {
-        if (!FirebasePlugin.hasNotificationsCallback()) {
+        if (!FirebasePlugin.hasNotificationsCallback() || inBackground) {
             String packageName = context.getPackageName();
             if (FirebasePlugin.notificationStack == null) {
                 FirebasePlugin.notificationStack = new ArrayList<Bundle>();
