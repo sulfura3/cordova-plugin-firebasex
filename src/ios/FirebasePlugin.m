@@ -25,7 +25,7 @@
 @synthesize notificationStack;
 
 static NSString*const LOG_TAG = @"FirebasePlugin[native]";
-static NSInteger const kNotificationStackSize = 10;
+static NSInteger const kNotificationStackSize = 32;
 static NSString*const FIREBASE_CRASHLYTICS_COLLECTION_ENABLED = @"FIREBASE_CRASHLYTICS_COLLECTION_ENABLED"; //preference
 static NSString*const FirebaseCrashlyticsCollectionEnabled = @"FirebaseCrashlyticsCollectionEnabled"; //plist
 static NSString*const FIREBASE_ANALYTICS_COLLECTION_ENABLED = @"FIREBASE_ANALYTICS_COLLECTION_ENABLED";
@@ -571,17 +571,20 @@ static NSMutableArray* pendingGlobalJS = nil;
 }
 
 - (void)onMessageReceived:(CDVInvokedUrlCommand *)command {
-    @try {
-        self.notificationCallbackId = command.callbackId;
+    self.notificationCallbackId = command.callbackId;
+    [self sendPendingNotifications];
+}
 
-        if (self.notificationStack != nil && [self.notificationStack count]) {
+- (void)sendPendingNotifications {
+    if (self.notificationStack != nil && [self.notificationStack count]) {
+        @try {
             for (NSDictionary *userInfo in self.notificationStack) {
                 [self sendNotification:userInfo];
             }
-            [self.notificationStack removeAllObjects];
+        } @catch (NSException *exception) {
+            [self handlePluginExceptionWithoutContext:exception];
         }
-    }@catch (NSException *exception) {
-        [self handlePluginExceptionWithContext:exception :command];
+        [self.notificationStack removeAllObjects];
     }
 }
 
@@ -624,7 +627,7 @@ static NSMutableArray* pendingGlobalJS = nil;
             [self _logMessage:@"Message handled by custom receiver"];
             return;
         }
-        if (self.notificationCallbackId != nil) {
+        if (self.notificationCallbackId != nil && [AppDelegate.instance.applicationInBackground isEqual:@(NO)]) {
             [self sendPluginDictionaryResultAndKeepCallback:userInfo command:self.commandDelegate callbackId:self.notificationCallbackId];
         } else {
             if (!self.notificationStack) {
