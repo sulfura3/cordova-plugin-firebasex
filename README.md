@@ -838,12 +838,12 @@ Note: only notification messages can be sent via the Firebase Console - data mes
 
 If the notification message arrives while the app is in the background/not running, it will be displayed as a system notification.
 
-By default, no callback is made to the plugin when the message arrives while the app is not in the foreground, since the display of the notification is entirely handled by the operating system.
-However, there are platform-specific circumstances where a callback can be made when the message arrives and the app is in the background that don't require user interaction to receive the message payload - see [Android background notifications](#android-background-notifications) and [iOS background notifications](#ios-background-notifications) for details.
-
 If the user taps the system notification, this launches/resumes the app and the notification title, body and optional data payload is passed to the [onMessageReceived](#onMessageReceived) callback.
-
 When the `onMessageReceived` is called in response to a user tapping a system notification while the app is in the background/not running, it will be passed the property `tap: "background"`.
+
+By default, no callback is made to the plugin when the message arrives while the app is not in the foreground, since the display of the notification is entirely handled by the operating system.
+However, there are platform-specific circumstances where a callback can be made, when a message arrives while the app is in the background or is inactive, that doesn't require user interaction to receive the message payload - see [Android background notifications](#android-background-notifications) and [iOS background notifications](#ios-background-notifications) for details.
+
 
 ## Foreground notifications
 
@@ -878,9 +878,11 @@ Notifications on Android can be customised to specify the sound, icon, LED colou
 
 If the notification message arrives while the app is in the background/not running, it will be displayed as a system notification.
 
-If a notification message arrives while the app is in the background but is still running (i.e. has not been task-killed) and the device is not in power-saving mode, the `onMessageReceived` callback will be invoked without the `tap` property, indicating the message was received without user interaction.
-
 If the user then taps the system notification, the app will be brought to the foreground and `onMessageReceived` will be invoked **again**, this time with `tap: "background"` indicating that the user tapped the system notification while the app was in the background.
+
+If a notification message arrives while the app is in the background or inactive, it will be queued until the next time the app is resumed into the foreground. This is to ensure the Cordova application running in the Webview is in a state where it can receive the notification message.
+Upon resuming, each queued notification will be sent to the `onMessageReceived` callback without the `tap` property, indicating the message was received without user interaction.
+
 
 In addition to the title and body of the notification message, Android system notifications support specification of the following notification settings:
 
@@ -1278,10 +1280,15 @@ For example:
 
 ### iOS background notifications
 
-If the app is in the background but is still running (i.e. has not been task-killed) and the device is not in power-saving mode, the `onMessageReceived` callback can be invoked when the message arrives without requiring user interaction (i.e. tapping the system notification).
-To do this you must specify `"content-available": 1` in the `apns.payload.aps` section of the message payload - see the [Apple documentation](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW8) for more information.
-When the message arrives, the `onMessageReceived` callback will be invoked without the `tap` property, indicating the message was received without user interaction.
+If the notification message arrives while the app is in the background/not running, it will be displayed as a system notification.
+
 If the user then taps the system notification, the app will be brought to the foreground and `onMessageReceived` will be invoked **again**, this time with `tap: "background"` indicating that the user tapped the system notification while the app was in the background.
+
+If the app is in the background or inactive when the notification message arrives, the message can be queued so that the next time the app is resumed from the background, the `onMessageReceived` callback is invoked with the notification payload without requiring user interaction (i.e. tapping the system notification).
+To do this you must specify `"content-available": 1` in the `apns.payload.aps` section of the message payload - see the [Apple documentation](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW8) for more information.
+When app is next launched/resumed from the background, any queued notification payloads will be sent to the `onMessageReceived` callback without the `tap` property, indicating the message was received without user interaction.
+
+Note: the notification message cannot be immediately delivered while the app is in the background or inactive to ensure the Cordova application running in the Webview is in a state where it can receive the notification message. Therefore the message is queued until the app is resumed into the foreground.
 
 ### iOS notification sound
 
