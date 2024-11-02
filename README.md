@@ -242,6 +242,10 @@ Or you can manually edit the values in your project's `package.json` under `cord
 -   `FIREBASE_ANALYTICS_WITHOUT_ADS` - whether to disable advertising ID collection in Analytics. Defaults to false.
     -   Note that this is a [post-install plugin variable](#post-install-plugin-variables) so an additional step is required to activate the plugin variable the first time it is specified.
         See [Disable data collection on startup](#disable-data-collection-on-startup) for more info.
+-   `FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY` - whether to deliver FCM messages immediately when the app is in the background. Defaults to false.
+  - If false, messages that arrive while the app is in the background/inactive are queued and delivered when the app is next brought to the foreground.
+  - If true, messages are delivered immediately when received, even if the app is in the background/inactive.
+    - Note: on modern iOS and Android devices, there is no guarantee that the message will be successfully delivered to the app because the OS may have paused the app's Cordova Webview process or the Webview may not exist at the time the message is received.
 -   `GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED` - determines whether Google Analytics collects Advertising IDs (ADIDs) for ad targeting and attribution purposes. If set to true, Google Analytics will collect ADIDs; if set to false, it will not collect ADIDs. Defaults to true.
 -   `GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE` - specifies the default setting for allowing Google Analytics to store analytics data. If set to true, Google Analytics is allowed to store analytics data; if set to false, it is not allowed to store analytics data by default.
 -   `GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE` - specifies the default setting for allowing Google Analytics to store ad-related data. If set to true, Google Analytics is allowed to store ad-related data; if set to false, it is not allowed to store ad-related data by default. Defaults to true.
@@ -883,6 +887,12 @@ If the user then taps the system notification, the app will be brought to the fo
 If a notification message arrives while the app is in the background or inactive, it will be queued until the next time the app is resumed into the foreground. This is to ensure the Cordova application running in the Webview is in a state where it can receive the notification message.
 Upon resuming, each queued notification will be sent to the `onMessageReceived` callback without the `tap` property, indicating the message was received without user interaction.
 
+If you wish to attempt to immediately deliver the message payload to the `onMessageReceived` callback when the app is in the background or inactive (the default behaviour of this plugin prior to v18), you can set the `FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY` plugin variable to `true` at plugin install time:
+
+    cordova plugin add cordova-plugin-firebasex --variable FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY=true
+
+However there is no guarantee that the message will be delivered successfully, since the Cordova application running in the Webview may not be in a state where it can receive the notification message.
+
 
 In addition to the title and body of the notification message, Android system notifications support specification of the following notification settings:
 
@@ -1288,7 +1298,11 @@ If the app is in the background or inactive when the notification message arrive
 To do this you must specify `"content-available": 1` in the `apns.payload.aps` section of the message payload - see the [Apple documentation](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW8) for more information.
 When app is next launched/resumed from the background, any queued notification payloads will be sent to the `onMessageReceived` callback without the `tap` property, indicating the message was received without user interaction.
 
-Note: the notification message cannot be immediately delivered while the app is in the background or inactive to ensure the Cordova application running in the Webview is in a state where it can receive the notification message. Therefore the message is queued until the app is resumed into the foreground.
+If you wish to attempt to immediately deliver the message payload to the `onMessageReceived` callback when the app is in the background or inactive (the default behaviour of this plugin prior to v18), you can set the `FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY` plugin variable to `true` at plugin install time:
+
+    cordova plugin add cordova-plugin-firebasex --variable FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY=true
+
+However there is no guarantee that the message will be delivered successfully, since the Cordova application running in the Webview may not be in a state where it can receive the notification message.
 
 ### iOS notification sound
 

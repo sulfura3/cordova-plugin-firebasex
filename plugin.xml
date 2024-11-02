@@ -19,6 +19,7 @@
 	<preference name="FIREBASE_CRASHLYTICS_COLLECTION_ENABLED" default="true" />
 	<preference name="FIREBASE_FCM_AUTOINIT_ENABLED" default="true" />
 	<preference name="FIREBASE_ANALYTICS_WITHOUT_ADS" default="false" />
+	<preference name="FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY" default="false" />
 
 	<preference name="GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED" default="true" />
 	<preference name="GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE" default="true" />
@@ -34,6 +35,7 @@
 			<clobbers target="FirebasePlugin" />
 		</js-module>
 		<config-file parent="/*" target="res/xml/config.xml">
+			<preference name="FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY" value="$FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY" />
 			<feature name="FirebasePlugin">
 				<param name="android-package" value="org.apache.cordova.firebase.FirebasePlugin" />
 				<param name="onload" value="true" />
