@@ -149,6 +149,10 @@
 			</array>
 		</config-file>
 
+		<config-file target="*-Info.plist" parent="FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY">
+			<string>$FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY</string>
+		</config-file>
+
 		<resource-file src="src/ios/GoogleService-Info.plist" />
 
 		<header-file src="src/ios/AppDelegate+FirebasePlugin.h" />

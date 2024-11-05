@@ -1,9 +1,5 @@
 # Version 18.0.0
-* (iOS & Android) BREAKING change: Notification payloads received while the app is in the background or inactive are now queued instead of delivered immediately to the application.
-As soon as the application resumes, the plugin will send all pending notifications back to the onMessageReceived callback.
-This does not affect the appearance of system notifications while the app is in the background or inactive - these will display immediately as before and if the user taps the notification, the app will be launched and the notification payload delivered to the onMessageReceived callback immediately as before.
-The change is to ensure that the plugin can deliver the notification payload to the application in a consistent manner regardless of the app's state when the notification is received. This because the Cordova Webview may not exist or be paused when the notification is received, so the plugin needs to ensure the notification payload is delivered to the application when the Webview is ready to receive it.
-
+* (iOS & Android) BREAKING change: Notification payloads received while the app is in the background or inactive are now queued by default instead of delivered immediately to the application.
   * Merged from PR [#902](https://github.com/dpa99c/cordova-plugin-firebasex/pull/902)
 
 # Version 17.0.0

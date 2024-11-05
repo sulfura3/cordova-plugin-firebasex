@@ -153,6 +153,7 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
     @try {
         [FirebasePlugin.firebasePlugin _logMessage:@"Enter foreground"];
         [FirebasePlugin.firebasePlugin executeGlobalJavascript:@"FirebasePlugin._applicationDidBecomeActive()"];
+        [FirebasePlugin.firebasePlugin sendPendingNotifications];
     }@catch (NSException *exception) {
         [FirebasePlugin.firebasePlugin handlePluginExceptionWithoutContext:exception];
     }
