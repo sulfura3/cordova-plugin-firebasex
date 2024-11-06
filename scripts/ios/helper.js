@@ -427,11 +427,15 @@ end
         }
 
         if(pluginVariables['IOS_USE_PRECOMPILED_FIRESTORE_POD'] === 'true'){
-            var standardFirestorePodMatches = podFileContents.match(standardFirestorePodRegEx);
-            if(standardFirestorePodMatches){
-                podFileContents = podFileContents.replace(standardFirestorePodMatches[0], prebuiltFirestorePodTemplate.replace('{version}', standardFirestorePodMatches[1]));
-                podFileModified = true;
-                utilities.log("Configured Podfile for pre-built Firestore pod");
+            if(process.env.SKIP_FIREBASE_FIRESTORE_SWIFT){
+                var standardFirestorePodMatches = podFileContents.match(standardFirestorePodRegEx);
+                if(standardFirestorePodMatches){
+                    podFileContents = podFileContents.replace(standardFirestorePodMatches[0], prebuiltFirestorePodTemplate.replace('{version}', standardFirestorePodMatches[1]));
+                    podFileModified = true;
+                    utilities.log("Configured Podfile for pre-built Firestore pod");
+                }
+            }else{
+                throw new Error("The environment variable SKIP_FIREBASE_FIRESTORE_SWIFT is not set. This is required to use the pre-built Firestore pod.")
             }
         }
         if(podFileModified) {

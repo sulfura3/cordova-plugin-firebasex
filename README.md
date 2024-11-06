@@ -294,10 +294,12 @@ The following plugin variables are used to specify the Firebase SDK versions as 
 - `IOS_GOOGLE_TAG_MANAGER_VERSION` - a specific version of the Google Tag Manager library to set in the Podfile
     -   If not specified, the default version defined in the `<pod>` element in the `plugin.xml` will be used.
 - `IOS_USE_PRECOMPILED_FIRESTORE_POD` - if `true`, switches Podfile to use a [pre-compiled version of the Firestore pod](https://github.com/invertase/firestore-ios-sdk-frameworks.git) to reduce build time
-    -   Since some users experienced long build times due to the Firestore pod (see [#407](https://github.com/dpa99c/cordova-plugin-firebasex/issues/407))
-    -   However other users have experienced build issues with the pre-compiled version (see [#735](https://github.com/dpa99c/cordova-plugin-firebasex/issues/735))
-    -   Defaults to `false` if not specified.
-    -   Note that this is a [post-install plugin variable](#post-install-plugin-variables) so an additional step is required to activate the plugin variable the first time it is specified.
+    - Defaults to `false` if not specified.
+    - If you set this option to `true`, you must ensure the environment variable `SKIP_FIREBASE_FIRESTORE_SWIFT` is set **globally** to a truthy value
+      - e.g. If using zsh: `echo 'export SKIP_FIREBASE_FIRESTORE_SWIFT=1' >> ~/.zshrc && source ~/.zshrc`
+      - This ensures the pre-built pod is compatible with the Cordova project environment ([see here](https://github.com/invertase/firestore-ios-sdk-frameworks/issues/62))
+    - Note that this is a [post-install plugin variable](#post-install-plugin-variables) so an additional step is required to activate the plugin variable the first time it is specified.
+    - If you're having issues building with Firestore, [see here](https://github.com/dpa99c/cordova-plugin-firebasex/wiki#ios-using-pre-built-firestore-pod) for suggested solutions.
 - `IOS_STRIP_DEBUG` - prevents symbolification of all libraries included via Cocoapods. See [Strip debug symbols](#strip-debug-symbols) for more info.
     -   e.g. `--variable IOS_STRIP_DEBUG=true`
     -   Defaults to `false` if not specified.
