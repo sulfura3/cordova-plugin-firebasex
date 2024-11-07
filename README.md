@@ -639,47 +639,17 @@ To prevent this, you can set the `IOS_STRIP_DEBUG` plugin variable which prevent
 
     cordova plugin add cordova-plugin-firebasex --variable IOS_STRIP_DEBUG=true
 
-By default this preference is set to `false`.
+By default, this preference is set to `false`.
 
 Note: if you enable this setting, any crashes that occur within libraries included via Cocopods will not be recorded in Crashlytics or other crash reporting services.
 
 ### Cordova CLI builds
 
-If you are building (directly or indirectly) via the Cordova CLI and a build failures on iOS such as the one below:
+- Older versions of the Firebase Inapp Messaging SDK and Google Tag Manager SDK components caused [build issues]((https://github.com/apache/cordova-ios/issues/659)) when building via the Cordova CLI.
+- Therefore, the `cli_build` branch was kept in sync with `master` but without the above components.
+- However, in recent versions, the Firebase Inapp Messaging SDK and Google Tag Manager SDK components no longer cause build issues when building via the Cordova CLI.
+- Therefore, the `cli_build` branch is no longer maintained and the `master` branch should be used for Cordova CLI builds.
 
-    error: Resource "/Build/Products/Debug-iphonesimulator/FirebaseInAppMessaging/InAppMessagingDisplayResources.bundle" not found. Run 'pod install' to update the copy resources script.
-
-This is likely due to [an issue with Cordova CLI builds for iOS](https://github.com/apache/cordova-ios/issues/659) when including certain pods into the build (see [#326](https://github.com/dpa99c/cordova-plugin-firebasex/issues/326)):
-
-Note that building from Xcode works fine, so if you are able then do this.
-
-Otherwise (e.g. if building via a CI) then you'll need to switch to using the [cli_build branch](https://github.com/dpa99c/cordova-plugin-firebasex/tree/cli_build) of this plugin:
-
-    cordova plugin rm cordova-plugin-firebasex && cordova plugin add cordova-plugin-firebasex@latest-cli
-
-This removes the Firebase Inapp Messaging and Google Tag Manager SDK components that are causing the build issues.
-The `cli_build` branch is kept in sync with `master` but without the above components.
-
-You can validate your CLI build environment using [this publicly-available `GoogleService-Info.plist`](https://github.coventry.ac.uk/301CEM-1920OCTJAN/301CEM-6957713/raw/master/CanaryApparel/GoogleService-Info.plist):
-
-    cordova create test com.canary.CanaryApparel && cd test
-    curl https://github.coventry.ac.uk/raw/301CEM-1920OCTJAN/301CEM-6957713/master/CanaryApparel/GoogleService-Info.plist -o GoogleService-Info.plist
-    cordova plugin add cordova-plugin-firebasex@latest-cli
-    cordova platform add ios
-    cordova build ios --emulator
-    #build succeeds
-
-Following the installation steps above, modify the `package.json` file to pin the `cli` variant of this package by removing the `^` or `~` prefix from the package declaration. Failure to do this will result in build issues the next time the `cordova prepare` steps are performed as the non-cli version of the package will replace the cli variant.
-
-```
-  "dependencies": {
-    "cordova-android": "~8.1.0",
-    "cordova-ios": "^6.1.0",
-    "cordova-plugin-androidx": "^2.0.0",
-    "cordova-plugin-androidx-adapter": "^1.1.1",
-    "cordova-plugin-firebasex": "^10.1.2-cli" --> Change to "10.1.2-cli"
-  },
-```
 
 # Firebase config setup
 
