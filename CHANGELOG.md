@@ -1,6 +1,11 @@
 # Version 18.0.0
-* (iOS & Android) BREAKING change: Notification payloads received while the app is in the background or inactive are now queued by default instead of delivered immediately to the application.
+* (iOS & Android) BREAKING change: Notification payloads received while the app is in the background or inactive are now queued by default, instead of delivered immediately to the application.
+  * This is to ensure the application is ready to receive the notification payload when it is delivered.
+  * This DOES NOT affect notifications that are tapped on by the user, which are always delivered immediately.
   * Merged from PR [#902](https://github.com/dpa99c/cordova-plugin-firebasex/pull/902)
+* (ios) fix: explicitly specify FirebaseCoreExtension version in Podfile so it aligns with other component versions
+* (ios) Document and check if SKIP_FIREBASE_FIRESTORE_SWIFT environment variable is set if plugin variable IOS_USE_PRECOMPILED_FIRESTORE_POD is set to true
+* (iOS) Document deprecation of `cli_build` branch
 
 # Version 17.0.0
 * (ios) BREAKING: Update pinned Firebase SDK versions to [v11.2.0](https://firebase.google.com/support/release-notes/ios#version_1120_-_september_10_2024) and updated related dependencies: GoogleSignIn v7.0.0, GoogleTagManager v8.0.0
