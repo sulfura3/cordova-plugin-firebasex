@@ -265,10 +265,34 @@ end
         return podFileModified;
     },
     applyPluginVarsToPlists: function(pluginVariables, iosPlatform){
-        var googlePlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.dest), 'utf8')),
-            appPlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.appPlist), 'utf8')),
-            entitlementsDebugPlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.entitlementsDebugPlist), 'utf8')),
-            entitlementsReleasePlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.entitlementsReleasePlist), 'utf8')),
+        var googlePlistPath = path.resolve(iosPlatform.dest);
+        if(!fs.existsSync(googlePlistPath)){
+            utilities.warn(`Google plist not found at ${googlePlistPath}`);
+            return;
+        }
+
+        var appPlistPath = path.resolve(iosPlatform.appPlist);
+        if(!fs.existsSync(appPlistPath)){
+            utilities.warn(`App plist not found at ${appPlistPath}`);
+            return;
+        }
+
+        var entitlementsDebugPlistPath = path.resolve(iosPlatform.entitlementsDebugPlist);
+        if(!fs.existsSync(entitlementsDebugPlistPath)){
+            utilities.warn(`Entitlements debug plist not found at ${entitlementsDebugPlistPath}`);
+            return;
+        }
+
+        var entitlementsReleasePlistPath = path.resolve(iosPlatform.entitlementsReleasePlist);
+        if(!fs.existsSync(entitlementsReleasePlistPath)){
+            utilities.warn(`Entitlements release plist not found at ${entitlementsReleasePlistPath}`);
+            return;
+        }
+
+        var googlePlist = plist.parse(fs.readFileSync(googlePlistPath, 'utf8')),
+            appPlist = plist.parse(fs.readFileSync(appPlistPath, 'utf8')),
+            entitlementsDebugPlist = plist.parse(fs.readFileSync(entitlementsDebugPlistPath, 'utf8')),
+            entitlementsReleasePlist = plist.parse(fs.readFileSync(entitlementsReleasePlistPath, 'utf8')),
             googlePlistModified = false,
             appPlistModified = false,
             entitlementsPlistsModified = false;
@@ -460,8 +484,20 @@ end
         return podFileModified;
     },
     ensureEncodedAppIdInUrlSchemes: function (iosPlatform){
-        var googlePlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.dest), 'utf8')),
-            appPlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.appPlist), 'utf8')),
+        var googlePlistPath = path.resolve(iosPlatform.dest);
+        if(!fs.existsSync(googlePlistPath)){
+            utilities.warn(`Google plist not found at ${googlePlistPath}`);
+            return;
+        }
+
+        var appPlistPath = path.resolve(iosPlatform.appPlist);
+        if(!fs.existsSync(appPlistPath)){
+            utilities.warn(`App plist not found at ${appPlistPath}`);
+            return;
+        }
+
+        var googlePlist = plist.parse(fs.readFileSync(googlePlistPath, 'utf8')),
+            appPlist = plist.parse(fs.readFileSync(appPlistPath, 'utf8')),
             googleAppId = googlePlist["GOOGLE_APP_ID"],
             encodedAppId = 'app-'+googleAppId.replace(/:/g,'-');
 
