@@ -175,4 +175,12 @@ Utilities.log = function(msg){
     console.log(Utilities.getPluginId()+': '+msg);
 };
 
+Utilities.warn = function(msg){
+    console.warn(Utilities.getPluginId()+': '+msg);
+};
+
+Utilities.error = function(msg){
+    console.error(Utilities.getPluginId()+': '+msg);
+};
+
 module.exports = Utilities;

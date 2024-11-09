@@ -48,7 +48,7 @@ function ensureUrlSchemeInPlist(urlScheme, appPlist){
         if(typeof entryIndex === "undefined") entryIndex = i;
         appPlist['CFBundleURLTypes'][entryIndex] = entry;
         appPlistModified = true;
-        utilities.log('cordova-plugin-firebasex: Added URL scheme "'+urlScheme+'"');
+        utilities.log('Added URL scheme "'+urlScheme+'"');
     }
 
     return {plist: appPlist, modified: appPlistModified}
@@ -231,8 +231,15 @@ module.exports = {
     },
     applyPodsPostInstall: function(pluginVariables, iosPlatform){
         var podFileModified = false,
-            podFilePath = iosPlatform.podFile,
-            podFile = fs.readFileSync(path.resolve(podFilePath)).toString(),
+            podFilePath = path.resolve(iosPlatform.podFile);
+
+        // check if file exists
+        if(!fs.existsSync(podFilePath)){
+            utilities.warn(`Podfile not found at ${podFilePath}`);
+            return false;
+        }
+
+        var podFile = fs.readFileSync(podFilePath).toString(),
             DEBUG_INFORMATION_FORMAT = pluginVariables['IOS_STRIP_DEBUG'] && pluginVariables['IOS_STRIP_DEBUG'] === 'true' ? 'dwarf' : 'dwarf-with-dsym',
             iosDeploymentTargetMatch = podFile.match(iosDeploymentTargetPodRegEx),
             IPHONEOS_DEPLOYMENT_TARGET = iosDeploymentTargetMatch ? iosDeploymentTargetMatch[1] : null;
@@ -252,7 +259,7 @@ post_install do |installer|
 end
                 `;
             fs.writeFileSync(path.resolve(podFilePath), podFile);
-            utilities.log('cordova-plugin-firebasex: Applied post install block to Podfile');
+            utilities.log('Applied post install block to Podfile');
             podFileModified = true;
         }
         return podFileModified;
@@ -345,7 +352,15 @@ end
         }
     },
     applyPluginVarsToPodfile: function(pluginVariables, iosPlatform){
-        var podFileContents = fs.readFileSync(path.resolve(iosPlatform.podFile), 'utf8'),
+        var podFilePath = path.resolve(iosPlatform.podFile);
+
+        // check if file exists
+        if(!fs.existsSync(podFilePath)){
+            utilities.warn(`Podfile not found at ${podFilePath}`);
+            return false;
+        }
+
+        var podFileContents = fs.readFileSync(podFilePath, 'utf8'),
             podFileModified = false,
             specifiedInAppMessagingVersion = false;
 
