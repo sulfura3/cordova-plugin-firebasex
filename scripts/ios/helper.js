@@ -498,8 +498,14 @@ end
 
         var googlePlist = plist.parse(fs.readFileSync(googlePlistPath, 'utf8')),
             appPlist = plist.parse(fs.readFileSync(appPlistPath, 'utf8')),
-            googleAppId = googlePlist["GOOGLE_APP_ID"],
-            encodedAppId = 'app-'+googleAppId.replace(/:/g,'-');
+            googleAppId = googlePlist["GOOGLE_APP_ID"];
+
+        if(!googleAppId){
+            utilities.warn("Google App ID not found in Google plist");
+            return;
+        }
+
+        var encodedAppId = 'app-'+googleAppId.replace(/:/g,'-');
 
         var result = ensureUrlSchemeInPlist(encodedAppId, appPlist);
         if(result.modified){
