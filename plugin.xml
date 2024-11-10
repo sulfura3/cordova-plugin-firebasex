@@ -8,6 +8,12 @@
 
 	<license>MIT</license>
 
+	<engines>
+		<engine name="cordova" version=">=9" />
+		<engine name="cordova-android" version=">=8" />
+		<engine name="cordova-ios" version=">=5 || 8.0.0-beta.1" />
+	</engines>
+
 	<preference name="FIREBASE_ANALYTICS_COLLECTION_ENABLED" default="true" />
 	<preference name="FIREBASE_PERFORMANCE_COLLECTION_ENABLED" default="true" />
 	<preference name="FIREBASE_CRASHLYTICS_COLLECTION_ENABLED" default="true" />
