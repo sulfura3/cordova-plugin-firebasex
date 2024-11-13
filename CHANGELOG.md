@@ -1,3 +1,15 @@
+# Version 18.0.1
+* feat(ios): prepare for cordova-ios 8 support - corrected app name
+  * Merged from PR [#896](https://github.com/dpa99c/cordova-plugin-firebasex/pull/896)
+* (ios) Explicitly allow 8.0.0-beta.1 in cordova-ios version requirements as >=5 does not allow it  
+* (ios) Gracefully handle missing Podfile when running hook scripts
+* (ios) Ensure plist files exist before attempting to access their contents. Gracefully fail if they are missing.
+* (ios) Gracefully fail if Google App ID is not found in Google plist  
+* (ios) fix: ensure IOS_FIREBASE_SDK_VERSION is applied to pre-built Firestore pod version if IOS_USE_PRECOMPILED_FIRESTORE_POD=true
+* (ios) Update pinned Firebase SDK versions to [v11.4.0](https://firebase.google.com/support/release-notes/ios#version_1140_-_october_21_2024)
+* (android) Update pinned Firebase SDK component versions to [BoM v33.6.1 (23 October 2024)](https://firebase.google.com/support/release-notes/android#2024-10-23)
+
+
 # Version 18.0.0
 * (iOS & Android) BREAKING change: Notification payloads received while the app is in the background or inactive are now queued by default, instead of delivered immediately to the application.
   * This is to ensure the application is ready to receive the notification payload when it is delivered.
