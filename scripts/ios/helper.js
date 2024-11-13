@@ -16,6 +16,7 @@ var versionRegex = /\d+\.\d+\.\d+[^'"]*/,
     standardFirestorePodRegEx = /pod 'FirebaseFirestore', '(\d+\.\d+\.\d+[^'"]*)'/,
     googleSignInPodRegEx = /pod 'GoogleSignIn', '(\d+\.\d+\.\d+[^'"]*)'/,
     googleTagManagerPodRegEx = /pod 'GoogleTagManager', '(\d+\.\d+\.\d+[^'"]*)'/,
+    prebuiltFirestorePodRegEx = /pod 'FirebaseFirestore', :tag => '(\d+\.\d+\.\d+[^'"]*)', :git => 'https:\/\/github.com\/invertase\/firestore-ios-sdk-frameworks.git'/,
     prebuiltFirestorePodTemplate = "pod 'FirebaseFirestore', :tag => '{version}', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git'",
     iosDeploymentTargetPodRegEx = /platform :ios, '(\d+\.\d+\.?\d*)'/;
 
@@ -422,8 +423,18 @@ end
                             podFileModified = true;
                         }
                     });
-                    if(podFileModified) utilities.log("Firebase iOS SDK version set to v"+pluginVariables['IOS_FIREBASE_SDK_VERSION']+" in Podfile");
                 }
+                var prebuiltFirestoreMatches = podFileContents.match(prebuiltFirestorePodRegEx);
+                if(prebuiltFirestoreMatches){
+                    prebuiltFirestoreMatches.forEach((match) => {
+                        var currentVersion = match.match(versionRegex)[0];
+                        if(!match.match(pluginVariables['IOS_FIREBASE_SDK_VERSION'])){
+                            podFileContents = podFileContents.replace(match, match.replace(currentVersion, pluginVariables['IOS_FIREBASE_SDK_VERSION']));
+                            podFileModified = true;
+                        }
+                    });
+                }
+                if(podFileModified) utilities.log("Firebase iOS SDK version set to v"+pluginVariables['IOS_FIREBASE_SDK_VERSION']+" in Podfile");
             }else{
                 throw new Error("The value \""+pluginVariables['IOS_FIREBASE_SDK_VERSION']+"\" for IOS_FIREBASE_SDK_VERSION is not a valid semantic version format")
             }
