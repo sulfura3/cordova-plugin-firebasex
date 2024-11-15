@@ -1,3 +1,9 @@
+# Version 18.0.2
+* bugfix: only apply new logic for cordova-ios@8 if platform is ios
+  - Resolves [#907](https://github.com/dpa99c/cordova-plugin-firebasex/issues/907)
+  - Introduced by [#896](https://github.com/dpa99c/cordova-plugin-firebasex/pull/896)
+
+
 # Version 18.0.1
 * feat(ios): prepare for cordova-ios 8 support - corrected app name
   * Merged from PR [#896](https://github.com/dpa99c/cordova-plugin-firebasex/pull/896)
