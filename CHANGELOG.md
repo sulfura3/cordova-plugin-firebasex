@@ -1,3 +1,8 @@
+# Version 18.0.3
+* (ios) bugfix: fix invalid cordova hook interface use
+  * Resolves [#908](https://github.com/dpa99c/cordova-plugin-firebasex/issues/908)
+  * Merged from PR [#909](https://github.com/dpa99c/cordova-plugin-firebasex/pull/909)
+
 # Version 18.0.2
 * bugfix: only apply new logic for cordova-ios@8 if platform is ios
   - Resolves [#907](https://github.com/dpa99c/cordova-plugin-firebasex/issues/907)
