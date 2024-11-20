@@ -1657,24 +1657,77 @@ See the [iOS](https://firebase.google.com/docs/in-app-messaging/get-started?plat
 
 # Google Tag Manager
 
-Download your container-config json file from Tag Manager and add a `<resource-file>` node in your `config.xml`.
+https://developers.google.com/tag-platform/tag-manager/mobile
 
 ## Android
 
+1. Create directory `resources/android/containers`
+
+1. Download your container-config json file from Tag Manager and add a `<resource-file>` node in your `config.xml`.
+
 ```xml
 <platform name="android">
-    <resource-file src="GTM-XXXXXXX.json" target="assets/containers/GTM-XXXXXXX.json" />
+    <resource-file src="resources/android/containers/GTM-XXXXXXX.json" target="app/src/main/assets/containers/GTM-XXXXXXX.json" />
+    ...
+```
+
+### Preview mode (optional)
+(More info)[https://developers.google.com/tag-platform/tag-manager/android/v5#preview_container]
+
+```xml
+<platform name="android">
+  <config-file parent="/manifest/application" target="AndroidManifest.xml">
+    <activity android:exported="true" android:name="com.google.android.gms.tagmanager.TagManagerPreviewActivity" android:noHistory="true" tools:replace="android:noHistory">
+      <intent-filter>
+        <data android:scheme="tagmanager.c.{{BUNDLE_ID}}" />
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+      </intent-filter>
+    </activity>
+  </config-file>
     ...
 ```
 
 ## iOS
 
+The application name should not contain spaces
+
 ```xml
-<platform name="ios">
-    <resource-file src="GTM-YYYYYYY.json" />
-    ...
+
+<name short="Cordova App">CordovaApp</name>
+
 ```
 
+1. Create directory `resources/ios/container`
+
+1. Download your container-config json file from Tag Manager and to directory.
+
+### Preview mode (optional)
+(More info)[https://developers.google.com/tag-platform/tag-manager/ios/v5#preview_container]
+
+1. Add `xmlns:tools="http://schemas.android.com/tools"` to  `<widget>` tag
+
+1. Add to config.xml
+
+```xml
+<platform name="android">
+  <edit-config file="*-Info.plist" mode="merge" target="CFBundleURLTypes">
+    <array>
+      <dict>
+        <key>CFBundleURLName</key>
+        <string>{{BUNDLE_ID}}</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>tagmanager.c.{{BUNDLE_ID}}</string>
+        </array>
+      </dict>
+    </array>
+  </edit-config>
+    ...
+</platform>
+
+```
 # Performance Monitoring
 
 The [Firebase Performance Monitoring SDK](https://firebase.google.com/docs/perf-mon) enables you to measure, monitor and analyze the performance of your app in the Firebase console.

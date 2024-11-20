@@ -192,6 +192,46 @@ module.exports = {
         fs.writeFileSync(path.resolve(xcodeProjectPath), xcodeProject.writeSync());
     },
 
+    addGoogleTagManagerContainer: function (context, xcodeProjectPath) {
+        const appName = utilities.getAppName();
+        const containerDirectorySource = `${context.opts.projectRoot}/resources/ios/container`;
+        const containerDirectoryTarget = `platforms/ios/${appName}/container`;
+        const xcodeProject = xcode.project(xcodeProjectPath);
+        xcodeProject.parseSync();
+
+        if (utilities.directoryExists(containerDirectorySource)) {
+            utilities.log(`Preparing GoogleTagManager on iOS`);
+            try {
+                fs.cpSync(containerDirectorySource, containerDirectoryTarget, {recursive: true});
+                const appPBXGroup = xcodeProject.findPBXGroupKey({name: appName})
+                xcodeProject.addResourceFile('container', {
+                    lastKnownFileType: 'folder',
+                    fileEncoding: 9
+                }, appPBXGroup);
+                fs.writeFileSync(path.resolve(xcodeProjectPath), xcodeProject.writeSync());
+            } catch (error) {
+                utilities.error(error);
+            }
+        }
+    },
+
+    removeGoogleTagManagerContainer: function (context, xcodeProjectPath) {
+        const appName = utilities.getAppName();
+        const appContainerDirectory = `platforms/ios/${appName}/container`;
+        const xcodeProject = xcode.project(xcodeProjectPath);
+        xcodeProject.parseSync();
+        if(utilities.directoryExists(appContainerDirectory)){
+            utilities.log(`Remove GoogleTagManager container`);
+            const appPBXGroup = xcodeProject.findPBXGroupKey({name: appName})
+            xcodeProject.removeResourceFile('container', {
+                lastKnownFileType: 'folder',
+                fileEncoding: 9
+            }, appPBXGroup);
+            fs.writeFileSync(path.resolve(xcodeProjectPath), xcodeProject.writeSync());
+            fs.rmSync(appContainerDirectory, {recursive: true});
+        }
+    },
+
     ensureRunpathSearchPath: function(context, xcodeProjectPath){
 
         function addRunpathSearchBuildProperty(proj, build) {
