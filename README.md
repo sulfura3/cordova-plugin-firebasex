@@ -1711,7 +1711,7 @@ The application name should not contain spaces
 1. Add to config.xml
 
 ```xml
-<platform name="android">
+<platform name="ios">
   <edit-config file="*-Info.plist" mode="merge" target="CFBundleURLTypes">
     <array>
       <dict>
