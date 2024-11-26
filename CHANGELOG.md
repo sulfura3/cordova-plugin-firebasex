@@ -1,3 +1,7 @@
+# Version 18.0.4
+* bugfix: remove unused cordova-ios import that breaks projects without ios platform
+  * Merged from PR [#912](https://github.com/dpa99c/cordova-plugin-firebasex/pull/912)
+
 # Version 18.0.3
 * (ios) bugfix: fix invalid cordova hook interface use
   * Resolves [#908](https://github.com/dpa99c/cordova-plugin-firebasex/issues/908)
