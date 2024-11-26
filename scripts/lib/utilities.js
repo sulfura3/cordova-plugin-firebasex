@@ -4,7 +4,6 @@
 var fs = require('fs');
 var path = require("path");
 var parser = require('xml-js');
-const cordova_ios = require("cordova-ios");
 
 var _configXml, _pluginXml, _context, _pluginVariables;
 
