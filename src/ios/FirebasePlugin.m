@@ -3034,6 +3034,19 @@ static NSMutableArray* pendingGlobalJS = nil;
     }
 }
 
+- (void)getLaunchNotification:(CDVInvokedUrlCommand *)command {
+    NSDictionary *notification = [[NSUserDefaults standardUserDefaults] objectForKey:@"launchNotification"];
+    if (notification != nil) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:notification];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"launchNotification"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+
 
 # pragma mark - Stubs
 - (void)createChannel:(CDVInvokedUrlCommand *)command {

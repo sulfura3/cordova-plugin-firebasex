@@ -51,6 +51,14 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
     
     @try{
         instance = self;
+
+        // Capture launch notification payload
+        NSDictionary *notification = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+        if (notification != nil) {
+            // Save the notification payload to UserDefaults
+            [[NSUserDefaults standardUserDefaults] setObject:notification forKey:@"launchNotification"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
         
         bool isFirebaseInitializedWithPlist = false;
         if(![FIRApp defaultApp]) {
@@ -565,6 +573,24 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
 
 - (nonnull ASPresentationAnchor)presentationAnchorForAuthorizationController:(nonnull ASAuthorizationController *)controller  API_AVAILABLE(ios(13.0)){
     return self.viewController.view.window;
+}
+
+- (void)getLaunchNotification:(CDVInvokedUrlCommand *)command {
+    @try {
+        NSDictionary *notification = [[NSUserDefaults standardUserDefaults] objectForKey:@"launchNotification"];
+        if (notification != nil) {
+            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:notification];
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"launchNotification"]; // Clear the saved notification
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [[FirebasePlugin firebasePlugin].commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        } else {
+            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+            [[FirebasePlugin firebasePlugin].commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
+    } @catch (NSException *exception) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[exception reason]];
+        [[FirebasePlugin firebasePlugin].commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
 }
 
 @end

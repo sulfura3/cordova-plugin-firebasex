@@ -511,6 +511,10 @@ export interface FirebasePlugin {
     registerApplicationDidEnterBackgroundListener(
         fn: () => void,
     ): void
+    getLaunchNotification(
+        success: (data: object) => void,
+        error: (err: any) => void
+    ): void
 }
 
 declare global {

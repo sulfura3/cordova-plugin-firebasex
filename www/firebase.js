@@ -615,3 +615,7 @@ exports.registerApplicationDidEnterBackgroundListener = function(fn){
     if(typeof fn !== "function") throw "The specified argument must be a function";
     onApplicationDidEnterBackgroundCallback = fn;
 };
+
+exports.getLaunchNotification = function(success, error) {
+    exec(success, error, "FirebasePlugin", "getLaunchNotification", []);
+};
