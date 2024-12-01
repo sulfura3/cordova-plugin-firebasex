@@ -2974,7 +2974,41 @@ static NSMutableArray* pendingGlobalJS = nil;
         [result setValue:secondFactors forKey:@"secondFactors"];
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:result];
-    }else{
+    }else if (error.code == FIRAuthErrorCodeCredentialAlreadyInUse){
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[error userInfo]];
+        FIROAuthCredential* updatedCredential = userInfo[FIRAuthErrorUserInfoUpdatedCredentialKey];
+        NSMutableDictionary *responseDict = [[NSMutableDictionary alloc] init];
+
+        [responseDict setValue:@(error.code) forKey:@"errorCode"];
+        [responseDict setValue:error.domain forKey:@"errorDomain"];
+        [responseDict setValue:userInfo.description forKey:@"errorDescription"];
+        if (userInfo[FIRAuthErrorUserInfoNameKey]) {
+            [responseDict setValue:userInfo[FIRAuthErrorUserInfoNameKey] forKey:FIRAuthErrorUserInfoNameKey];
+        }
+        if (userInfo[FIRAuthErrorUserInfoEmailKey]) {
+            [responseDict setValue:userInfo[FIRAuthErrorUserInfoEmailKey] forKey:FIRAuthErrorUserInfoEmailKey];
+        }
+        if (userInfo[FIRAuthErrorUserInfoNameKey]) {
+            [responseDict setValue:userInfo[FIRAuthErrorUserInfoNameKey] forKey:FIRAuthErrorUserInfoNameKey];
+        }
+
+        if (updatedCredential) {
+            NSMutableDictionary *updatedCredentialDict = [[NSMutableDictionary alloc] init];
+            if (updatedCredential.provider) {
+                [updatedCredentialDict setValue:updatedCredential.provider forKey:@"provider"];
+            }
+            if (updatedCredential.IDToken) {
+                [updatedCredentialDict setValue:updatedCredential.IDToken forKey:@"IDToken"];
+            }
+            NSNumber* key = [self saveAuthCredential:updatedCredential];
+            [updatedCredentialDict setValue:key forKey:@"id"];
+            [responseDict setValue:updatedCredentialDict forKey:@"updatedCredential"];
+        }
+
+        // TODO: Make messageAsDictionary work with error status- currently it returns undefined
+        NSString *jsonString = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:responseDict options:0 error:nil] encoding:NSUTF8StringEncoding];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:jsonString];
+    } else {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.description];
     }
     return pluginResult;
