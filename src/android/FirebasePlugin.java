@@ -193,6 +193,8 @@ public class FirebasePlugin extends CordovaPlugin {
 
     private MultiFactorResolver multiFactorResolver = null;
 
+    private Bundle launchNotification = null;
+
     @Override
     protected void pluginInitialize() {
         instance = this;
@@ -270,6 +272,7 @@ public class FirebasePlugin extends CordovaPlugin {
                             extras.putString("messageType", "notification");
                             extras.putString("tap", "background");
                             notificationStack.add(extras);
+                            launchNotification = extras;
                             Log.d(TAG, "Notification message found on init: " + extras.toString());
                         }
                     }
@@ -578,6 +581,10 @@ public class FirebasePlugin extends CordovaPlugin {
                 case "getInstallationToken":
                     this.getInstallationToken(args, callbackContext);
                     break;
+                case ("getLaunchNotification") {
+                    this.getLaunchNotification(callbackContext);
+                    break
+                    }
                 default:
                     callbackContext.error("Invalid action: " + action);
                     return false;
@@ -793,6 +800,30 @@ public class FirebasePlugin extends CordovaPlugin {
         }
     }
 
+    private void getLaunchNotification(CallbackContext callbackContext) {
+        try {
+            if (launchNotification != null) {
+                JSONObject json = new JSONObject();
+                if (launchNotification != null) {
+                    Set<String> keys = launchNotification.keySet();
+                    for (String key : keys) {
+                        try {
+                            Object value = launchNotification.get(key);
+                            json.put(key, value);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+    
+                callbackContext.success(json);
+            } else {
+                callbackContext.success(0); // No data found
+            }
+        } catch (Exception e) {
+            callbackContext.error("Error retrieving launch notification: " + e.getMessage());
+        }
+    }
 
     private void getToken(JSONArray args, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
