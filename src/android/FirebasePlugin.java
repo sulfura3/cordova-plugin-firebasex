@@ -580,11 +580,10 @@ public class FirebasePlugin extends CordovaPlugin {
                     break;
                 case "getInstallationToken":
                     this.getInstallationToken(args, callbackContext);
-                    break;
-                case ("getLaunchNotification") {
+                    break;                
+                case "getLaunchNotification": 
                     this.getLaunchNotification(callbackContext);
-                    break
-                    }
+                    break;
                 default:
                     callbackContext.error("Invalid action: " + action);
                     return false;
