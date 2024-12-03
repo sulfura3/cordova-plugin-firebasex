@@ -1,3 +1,15 @@
+# Version 18.0.5
+* (android) bugfix: Handle notification exceptions when sending pending notifications
+    * Merged from PR [#913](https://github.com/dpa99c/cordova-plugin-firebasex/pull/913)
+* fix: Integration with GoogleTagManager
+  * Merged from PR [#906](https://github.com/dpa99c/cordova-plugin-firebasex/pull/906)
+* (ios) feat: Turn on debug view for debug builds by default
+    * Merged from PR [#910](https://github.com/dpa99c/cordova-plugin-firebasex/pull/910)
+* (ios) fix: Enabled access to `FIRAuthErrorUserInfoUpdatedCredentialKey` on `linkUserWithCredential` auth/credential-already-in-use error
+    * Merged from PR [#916](https://github.com/dpa99c/cordova-plugin-firebasex/pull/916)
+* (ios) Update pinned Firebase SDK versions to [v11.5.0](https://firebase.google.com/support/release-notes/ios#version_1150_-_november_11_2024)
+* * (android) Update pinned Firebase SDK component versions to [BoM v33.6.0 (15 November 2024)](https://firebase.google.com/support/release-notes/android#2024-11-15)
+
 # Version 18.0.4
 * bugfix: remove unused cordova-ios import that breaks projects without ios platform
   * Merged from PR [#912](https://github.com/dpa99c/cordova-plugin-firebasex/pull/912)
@@ -16,13 +28,13 @@
 # Version 18.0.1
 * feat(ios): prepare for cordova-ios 8 support - corrected app name
   * Merged from PR [#896](https://github.com/dpa99c/cordova-plugin-firebasex/pull/896)
-* (ios) Explicitly allow 8.0.0-beta.1 in cordova-ios version requirements as >=5 does not allow it  
+* (ios) Explicitly allow 8.0.0-beta.1 in cordova-ios version requirements as >=5 does not allow it
 * (ios) Gracefully handle missing Podfile when running hook scripts
 * (ios) Ensure plist files exist before attempting to access their contents. Gracefully fail if they are missing.
-* (ios) Gracefully fail if Google App ID is not found in Google plist  
+* (ios) Gracefully fail if Google App ID is not found in Google plist
 * (ios) fix: ensure IOS_FIREBASE_SDK_VERSION is applied to pre-built Firestore pod version if IOS_USE_PRECOMPILED_FIRESTORE_POD=true
 * (ios) Update pinned Firebase SDK versions to [v11.4.0](https://firebase.google.com/support/release-notes/ios#version_1140_-_october_21_2024)
-* (android) Update pinned Firebase SDK component versions to [BoM v33.6.1 (23 October 2024)](https://firebase.google.com/support/release-notes/android#2024-10-23)
+* (android) Update pinned Firebase SDK component versions to [BoM v33.5.1 (23 October 2024)](https://firebase.google.com/support/release-notes/android#2024-10-23)
 
 
 # Version 18.0.0
