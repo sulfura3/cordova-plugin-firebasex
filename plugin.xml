@@ -172,19 +172,19 @@
 				<source url="https://cdn.cocoapods.org/"/>
 			</config>
 			<pods use-frameworks="true">
-				<pod name="FirebaseCore" spec="11.4.0"/>
-				<pod name="FirebaseCoreExtension" spec="11.4.0"/>
-				<pod name="FirebaseAuth" spec="11.4.0"/>
-				<pod name="FirebaseAnalytics" spec="11.4.0"/>
-				<!--<pod name="FirebaseAnalyticsOnDeviceConversion" spec="11.4.0"/>-->
-				<pod name="FirebaseMessaging" spec="11.4.0"/>
-				<pod name="FirebasePerformance" spec="11.4.0"/>
-				<pod name="FirebaseRemoteConfig" spec="11.4.0"/>
-				<pod name="FirebaseInAppMessaging" spec="11.4.0-beta"/>
-				<pod name="FirebaseFirestore" spec="11.4.0"/>
-				<pod name="FirebaseCrashlytics" spec="11.4.0"/>
-				<pod name="FirebaseFunctions" spec="11.4.0"/>
-				<pod name="FirebaseInstallations" spec="11.4.0"/>
+				<pod name="FirebaseCore" spec="11.5.0"/>
+				<pod name="FirebaseCoreExtension" spec="11.5.0"/>
+				<pod name="FirebaseAuth" spec="11.5.0"/>
+				<pod name="FirebaseAnalytics" spec="11.5.0"/>
+				<!--<pod name="FirebaseAnalyticsOnDeviceConversion" spec="11.5.0"/>-->
+				<pod name="FirebaseMessaging" spec="11.5.0"/>
+				<pod name="FirebasePerformance" spec="11.5.0"/>
+				<pod name="FirebaseRemoteConfig" spec="11.5.0"/>
+				<pod name="FirebaseInAppMessaging" spec="11.5.0-beta"/>
+				<pod name="FirebaseFirestore" spec="11.5.0"/>
+				<pod name="FirebaseCrashlytics" spec="11.5.0"/>
+				<pod name="FirebaseFunctions" spec="11.5.0"/>
+				<pod name="FirebaseInstallations" spec="11.5.0"/>
 				<pod name="GoogleSignIn" spec="7.0.0"/>
 				<pod name="GoogleTagManager" spec="8.0.0"/>
 			</pods>
