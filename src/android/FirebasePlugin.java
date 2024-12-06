@@ -690,7 +690,7 @@ public class FirebasePlugin extends CordovaPlugin {
                         }
                         FirebasePlugin.notificationStack.clear();
                     } catch (Exception e) {
-                        Log.e(TAG, e.getMessage());
+                        handleExceptionWithoutContext(e);
                     }
                 }
             });
