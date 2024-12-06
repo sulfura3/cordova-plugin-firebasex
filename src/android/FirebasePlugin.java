@@ -803,17 +803,16 @@ public class FirebasePlugin extends CordovaPlugin {
         try {
             if (launchNotification != null) {
                 JSONObject json = new JSONObject();
-                if (launchNotification != null) {
-                    Set<String> keys = launchNotification.keySet();
-                    for (String key : keys) {
-                        try {
-                            Object value = launchNotification.get(key);
-                            json.put(key, value);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                Set<String> keys = launchNotification.keySet();
+                for (String key : keys) {
+                    try {
+                        Object value = launchNotification.get(key);
+                        json.put(key, value);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
+                launchNotification = null;
     
                 callbackContext.success(json);
             } else {
