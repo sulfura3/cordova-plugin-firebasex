@@ -1,3 +1,20 @@
+# Version 18.0.7
+* (android) fix: remove Google Services plugin configuration so it doesn't conflict with `cordova-android@14` and use Cordova config to enable the plugin instead.
+  * Resolves [#931](https://github.com/dpa99c/cordova-plugin-firebasex/issues/931)
+
+# Version 18.0.6
+* (ios) bugfix: Force token refresh when calling getClaims
+    * Merged from PR [#919](https://github.com/dpa99c/cordova-plugin-firebasex/pull/919)
+* (ios) bugfix: notification payload not delivered by onMessageReceived when app is launched from cold start by tapping system notification.
+  * Resolves [#917](https://github.com/dpa99c/cordova-plugin-firebasex/issues/917)
+* (ios) chore: Update pinned Firebase SDK version to latest version v11.8.0 (3 Feb 2025)
+  * https://firebase.google.com/support/release-notes/ios#version_1180_-_february_3_2025
+* (ios) chore: Update pinned GoogleSignIn SDK to v7.1.0
+  * Resolves [#921](https://github.com/dpa99c/cordova-plugin-firebasex/issues/921)
+* (android) chore: Update pinned Firebase SDK to latest versions:  BoM version 33.9.0 (6 Feb 2025)
+  * https://firebase.google.com/support/release-notes/android#2025-02-06
+
+
 # Version 18.0.5
 * (android) bugfix: Handle notification exceptions when sending pending notifications
     * Merged from PR [#913](https://github.com/dpa99c/cordova-plugin-firebasex/pull/913)

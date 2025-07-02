@@ -6,7 +6,6 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:${cordovaConfig.AGP_VERSION}"
-        classpath "com.google.gms:google-services:${cordovaConfig.GRADLE_PLUGIN_GOOGLE_SERVICES_VERSION}"
         classpath "com.google.firebase:firebase-crashlytics-gradle:2.8.1"
     }
 }
@@ -35,16 +34,5 @@ android {
     }
 }
 
-cdvPluginPostBuildExtras.add({
-    afterEvaluate {
-        rootProject.subprojects {
-            if (name == "app") {
-                if (!plugins.hasPlugin('com.google.gms.google-services')) {
-                    apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
-                }
-            }
-        }
-    }
-})
 
 
