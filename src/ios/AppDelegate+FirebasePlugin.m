@@ -170,8 +170,6 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
     }@catch (NSException *exception) {
         [FirebasePlugin.firebasePlugin handlePluginExceptionWithoutContext:exception];
     }
-    
-    [FirebasePlugin.firebasePlugin sendPendingNotifications];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
@@ -217,13 +215,8 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
         [[FIRMessaging messaging] appDidReceiveMessage:userInfo];
         mutableUserInfo = [userInfo mutableCopy];
         NSDictionary* aps = [mutableUserInfo objectForKey:@"aps"];
-        bool isContentAvailable = false;
+        bool isContentAvailable = [self isContentAvailable:userInfo];
         if([aps objectForKey:@"alert"] != nil){
-            
-            if([aps objectForKey:@"content-available"] != nil){
-                NSNumber* contentAvailable = (NSNumber*) [aps objectForKey:@"content-available"];
-                isContentAvailable = [contentAvailable isEqualToNumber:[NSNumber numberWithInt:1]];
-            }
             [mutableUserInfo setValue:@"notification" forKey:@"messageType"];
             NSString* tap;
             if([self.applicationInBackground isEqual:[NSNumber numberWithBool:YES]] && !isContentAvailable){
@@ -411,18 +404,14 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
 
         
         NSDictionary* aps = [mutableUserInfo objectForKey:@"aps"];
-        bool isContentAvailable = [[aps objectForKey:@"content-available"] isEqualToNumber:[NSNumber numberWithInt:1]];
-        if(isContentAvailable){
-            [FirebasePlugin.firebasePlugin _logError:@"willPresentNotification: aborting as content-available:1 so system notification will be shown"];
-            return;
-        }
-        
         bool showForegroundNotification = [mutableUserInfo objectForKey:@"notification_foreground"];
         bool hasAlert = [aps objectForKey:@"alert"] != nil;
         bool hasBadge = [aps objectForKey:@"badge"] != nil;
         bool hasSound = [aps objectForKey:@"sound"] != nil;
 
-        if(showForegroundNotification){
+        bool isContentAvailable = [self isContentAvailable:mutableUserInfo];
+
+        if(showForegroundNotification && isContentAvailable){
             [FirebasePlugin.firebasePlugin _logMessage:[NSString stringWithFormat:@"willPresentNotification: foreground notification alert=%@, badge=%@, sound=%@", hasAlert ? @"YES" : @"NO", hasBadge ? @"YES" : @"NO", hasSound ? @"YES" : @"NO"]];
             if(hasAlert && hasBadge && hasSound){
                 completionHandler(UNNotificationPresentationOptionAlert + UNNotificationPresentationOptionBadge + UNNotificationPresentationOptionSound);
@@ -464,9 +453,9 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
             if (_prevUserNotificationCenterDelegate) {
                 // bubbling event
                 [_prevUserNotificationCenterDelegate
-                	userNotificationCenter:center
-                	didReceiveNotificationResponse:response
-                	withCompletionHandler:completionHandler
+                    userNotificationCenter:center
+                    didReceiveNotificationResponse:response
+                    withCompletionHandler:completionHandler
                 ];
                 return;
             } else {
@@ -598,4 +587,17 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
     }
 }
 
+- (bool) isContentAvailable:(NSDictionary*) userInfo {
+    if(userInfo == nil) {
+        return false;
+    }
+
+    NSDictionary* aps = [userInfo objectForKey:@"aps"];
+    if(aps == nil){
+        return false;
+    }
+    
+    return ([aps objectForKey:@"'content-available'"] != nil && [[aps objectForKey:@"'content-available'"] isEqualToNumber:[NSNumber numberWithInt:1]])
+        || ([aps objectForKey:@"content-available"] != nil && [[aps objectForKey:@"content-available"] isEqualToNumber:[NSNumber numberWithInt:1]]);
+}
 @end
